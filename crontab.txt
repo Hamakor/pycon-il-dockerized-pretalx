@@ -1,0 +1,22 @@
+# Crontab file base -- adaptations needed when installing
+
+# Replace "whatever" below by the actual MySql root password
+# Correct these definitions
+COMPOSE_ROOT=/opt/app-pretalx/dockerized
+MYSQL_RP=whatever
+PRETALX_DN=dbname
+
+# This is UTC, so midnight Israel is 3am here
+
+# once a week at 2am (not the same time as backups), run periodic tasks
+00 5 * * 6 cd $COMPOSE_ROOT && docker compose exec  pretalx-worker /root/tasks/periodic.sh
+
+# once a week a 4am do full backup with media
+# 00 7 * * 6 /root/tasks/make_backup.sh
+# (On current hosting media is backed up with system backup, so
+# full backup can stay relatively infrequent)
+@monthly   cd "$COMPOSE_ROOT" && docker compose exec -u root -e MARIADB_ROOT_PASSWORD="$MYSQL_RP" -e PRETALX_DB_NAME="$PRETALX_DN" pretalx-worker /root/tasks/make_backup.sh
+
+# nightly backup at 3am
+00 6 * * * cd "$COMPOSE_ROOT" && docker compose exec -u root -e MARIADB_ROOT_PASSWORD="$MYSQL_RP" -e PRETALX_DB_NAME="$PRETALX_DN" pretalx-worker /root/tasks/make_nomedia_backup.sh
+#@weekly   cd "$COMPOSE_ROOT" && docker compose exec -u root -e MARIADB_ROOT_PASSWORD="$MYSQL_RP" -e PRETALX_DB_NAME="$PRETALX_DN" pretalx-worker /root/tasks/make_nomedia_backup.sh

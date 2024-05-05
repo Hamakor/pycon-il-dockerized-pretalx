@@ -1,0 +1,66 @@
+version: "3"
+
+services:
+
+  redis:
+    image: redis:7
+
+  db:
+    image: mariadb:10.11
+    restart: always
+    env_file:
+      - init.env
+ 
+  pretalx:
+    build: ./pretalx
+    volumes:
+      - mysql-data:/var/lib/mysql
+      - pretalx-data:/var/pretalx/data
+      - pretalx-static:/var/pretalx/static
+    env_file:
+      - pretalx.env
+    ports:
+      - "8345:8345"
+    restart: unless-stopped
+    depends_on:
+      - redis
+      - db
+
+  pretalx-worker:
+    build: ./pretalx
+    volumes:
+      - mysql-data:/var/lib/mysql
+      - pretalx-data:/var/pretalx/data
+      - pretalx-static:/var/pretalx/static
+      - pretalx-backups:/root/backups
+    env_file:
+      - pretalx.env
+    command: /var/pretalx/venv/bin/celery -A pretalx.celery_app worker -l info
+    restart: unless-stopped
+    depends_on:
+      - redis
+      - db
+
+
+  init:
+    build: ./pretalx
+    volumes:
+      - mysql-data:/var/lib/mysql
+      - pretalx-data:/var/pretalx/data
+      - pretalx-static:/var/pretalx/static
+      - ./data:/var/init/data
+    user: root
+    working_dir: /root/init
+    env_file:
+      - init.env
+    entrypoint: /root/init/init.sh
+    restart: "no"
+    profiles: ["init"]
+    depends_on:
+      - db
+    
+volumes:
+  mysql-data:
+  pretalx-data:
+  pretalx-static:
+  pretalx-backups:
