@@ -35,6 +35,7 @@ RUN venv/bin/python -m pretalx makemessages -l he -d djangojs
 # Copy modified translation files
 WORKDIR /var/pretalx/venv/lib/python3.11/site-packages/
 COPY --chown=pretalx:pretalx ./pretalx-locale-he pretalx/locale/he
+COPY --chown=pretalx:pretalx ./calendar.io/he.js pretalx/static/vendored/fullcalendar/
 # COPY --chown=pretalx:pretalx ./schedule-editor-node_modules-he pretalx/frontend/schedule-editor/node_modules/he
 WORKDIR /var/pretalx
 RUN venv/bin/python -m pretalx rebuild
