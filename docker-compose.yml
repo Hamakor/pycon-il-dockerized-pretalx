@@ -4,6 +4,7 @@ services:
 
   redis:
     image: redis:7
+    restart: always
 
   db:
     image: mariadb:10.11
