@@ -37,7 +37,11 @@ WORKDIR /var/pretalx/venv/lib/python3.11/site-packages/
 COPY --chown=pretalx:pretalx ./pretalx-locale-he pretalx/locale/he
 COPY --chown=pretalx:pretalx ./calendar.io/he.js pretalx/static/vendored/fullcalendar/
 # COPY --chown=pretalx:pretalx ./schedule-editor-node_modules-he pretalx/frontend/schedule-editor/node_modules/he
+# Use Israel flag for Hebrew
+RUN cd pretalx/static/common/scss && \
+    echo 'div[lang=he], input[lang=he], textarea[lang=he] { background-image: url(static("vendored/flags/il.png")); }' >> _flags.scss
 WORKDIR /var/pretalx
+
 RUN venv/bin/python -m pretalx rebuild
 
 
