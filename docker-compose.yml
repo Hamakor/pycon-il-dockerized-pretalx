@@ -16,8 +16,8 @@ services:
     build: ./pretalx
     volumes:
       - mysql-data:/var/lib/mysql
-      - pretalx-data:/var/pretalx/data
-      - pretalx-static:/var/pretalx/static
+      - ./pretalx-data:/var/pretalx/data
+      - ./pretalx-static:/var/pretalx/static
     env_file:
       - pretalx.env
     ports:
@@ -31,8 +31,8 @@ services:
     build: ./pretalx
     volumes:
       - mysql-data:/var/lib/mysql
-      - pretalx-data:/var/pretalx/data
-      - pretalx-static:/var/pretalx/static
+      - ./pretalx-data:/var/pretalx/data
+      - ./pretalx-static:/var/pretalx/static
       - pretalx-backups:/root/backups
     env_file:
       - pretalx.env
@@ -47,8 +47,8 @@ services:
     build: ./pretalx
     volumes:
       - mysql-data:/var/lib/mysql
-      - pretalx-data:/var/pretalx/data
-      - pretalx-static:/var/pretalx/static
+      - ./pretalx-data:/var/pretalx/data
+      - ./pretalx-static:/var/pretalx/static
       - ./data:/var/init/data
     user: root
     working_dir: /root/init
